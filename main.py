@@ -51,12 +51,12 @@ def show_current_menu(message):
     help_button = types.KeyboardButton("Help")
     menu_markup.row(start_button)
     menu_markup.row(help_button)
-    bot.send_message(message.chat.id, text="Choose one:", reply_markup=menu_markup)
+    bot.send_message(message.chat.id, text="Оберіть одне:", reply_markup=menu_markup)
 
 
 @bot.message_handler(commands="help")
 def get_help(message):
-    bot.send_message(message.chat.id, text="This is quiz bot.\n To start quiz you need to type /start\n To cancel current quiz type /stop")
+    bot.send_message(message.chat.id, text="Це бот опитувальний.\n Щоб розпочати натисніть /start\n Щоб закінчити натисніть /stop")
 
 
 @bot.message_handler(commands=['stop'])
@@ -71,10 +71,10 @@ def stop_quiz(message):
     if session:
         db.session.delete(session)
         db.session.commit()
-        bot.send_message(message.chat.id, text="Quiz has been canceled", reply_markup=menu_markup)
+        bot.send_message(message.chat.id, text="Опитування скасовано", reply_markup=menu_markup)
         return
 
-    bot.send_message(message.chat.id, text="You have not started quiz yet", reply_markup=menu_markup)
+    bot.send_message(message.chat.id, text="Опитування ще не почалося", reply_markup=menu_markup)
 
 
 @bot.message_handler(commands=['start'])
@@ -82,7 +82,7 @@ def start_quiz_menu(message):
     session = Session.query.filter_by(user=message.from_user.id).first()
 
     if session:
-        bot.send_message(message.chat.id, text="You have already started quiz")
+        bot.send_message(message.chat.id, text="Ви вже розпочали опитування)
         return
 
     inline_markup = types.InlineKeyboardMarkup()
@@ -93,7 +93,7 @@ def start_quiz_menu(message):
         topic_btn.callback_data = '{"quiz_id": ' + str(topic.id)+"}"
         inline_markup.add(topic_btn)
 
-    bot.send_message(message.chat.id, text="Choose quiz:", reply_markup=inline_markup)
+    bot.send_message(message.chat.id, text="Оберіть тему:", reply_markup=inline_markup)
 
 
 @bot.message_handler(content_types="text")
@@ -145,8 +145,8 @@ def quiz_finished(session, chat_id):
     help_button = types.KeyboardButton("Help")
     menu_markup.row(start_button)
     menu_markup.row(help_button)
-    bot.send_message(chat_id, text="You finished quiz!", reply_markup=menu_markup)
-    bot.send_message(chat_id, text="Your score: " + str(session.mark)+" / " + str(session.passed_questions))
+    bot.send_message(chat_id, text="Ви завершили опитування!", reply_markup=menu_markup)
+    bot.send_message(chat_id, text="Ваш результат: " + str(session.mark)+" / " + str(session.passed_questions))
     db.session.delete(session)
     db.session.commit()
 
@@ -166,17 +166,17 @@ def user_answered(call):
     session = Session.query.filter_by(user=call.from_user.id).first()
 
     if not session:
-        bot.send_message(call.message.chat.id, text="You have not start quiz yet")
+        bot.send_message(call.message.chat.id, text="Ви ще не почали опитування")
         return
 
     question = Question.query.filter_by(topic=session.topic, id=answer.question).first()
 
     if not question:
-        bot.send_message(call.message.chat.id, text="This question will not count\n It is from another topic")
+        bot.send_message(call.message.chat.id, text="Це питання не зарахується\n Воно з іншої теми")
         return
 
     if question.id != session.current_question:
-        bot.send_message(call.message.chat.id, text="Stop cheating")
+        bot.send_message(call.message.chat.id, text="Не списуйте")
         return
 
     if answer.correct:
@@ -219,7 +219,7 @@ def create_session(call):
 
     topic = Topic.query.filter_by(id=quiz_id).first()
 
-    bot.send_message(call.message.chat.id, text="Your topic: "+topic.name)
+    bot.send_message(call.message.chat.id, text="Ваша тема: "+topic.name)
 
     questions = Question.query.filter_by(topic=quiz_id).all()
     if len(questions):
@@ -236,7 +236,7 @@ def create_session(call):
         menu_markup.row(start_button)
         menu_markup.row(help_button)
 
-        bot.send_message(call.message.chat.id, "Quiz has been started", reply_markup=menu_markup)
+        bot.send_message(call.message.chat.id, "Опитування розпочалося", reply_markup=menu_markup)
         send_question(call.message.chat.id, question, session.passed_questions)
 
 
