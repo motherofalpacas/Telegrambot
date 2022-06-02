@@ -48,22 +48,22 @@ class Session(db.Model):
 def show_current_menu(message):
     menu_markup = types.ReplyKeyboardMarkup()
     start_button = types.KeyboardButton("Start Quiz")
-#     help_button = types.KeyboardButton("Help")
+    help_button = types.KeyboardButton("Help")
     menu_markup.row(start_button)
     menu_markup.row(help_button)
-    bot.send_message(message.chat.id, text="Оберіть одне:", reply_markup=menu_markup)
+    bot.send_message(message.chat.id, text="Choose one:", reply_markup=menu_markup)
 
 
 @bot.message_handler(commands="help")
 def get_help(message):
-    bot.send_message(message.chat.id, text="Це бот опитувальник.\n Для початку натисніть /start\n Для відміни натисність /stop")
+    bot.send_message(message.chat.id, text="This is quiz bot.\n To start quiz you need to type /start\n To cancel current quiz type /stop")
 
 
 @bot.message_handler(commands=['stop'])
 def stop_quiz(message):
     menu_markup = types.ReplyKeyboardMarkup()
     start_button = types.KeyboardButton("Start Quiz")
-#     help_button = types.KeyboardButton("Help")
+    help_button = types.KeyboardButton("Help")
     menu_markup.row(start_button)
     menu_markup.row(help_button)
 
@@ -71,10 +71,10 @@ def stop_quiz(message):
     if session:
         db.session.delete(session)
         db.session.commit()
-        bot.send_message(message.chat.id, text="Опитування скасовано, reply_markup=menu_markup)
+        bot.send_message(message.chat.id, text="Quiz has been canceled", reply_markup=menu_markup)
         return
 
-    bot.send_message(message.chat.id, text="Опитування ще не почалося", reply_markup=menu_markup)
+    bot.send_message(message.chat.id, text="You have not started quiz yet", reply_markup=menu_markup)
 
 
 @bot.message_handler(commands=['start'])
@@ -82,7 +82,7 @@ def start_quiz_menu(message):
     session = Session.query.filter_by(user=message.from_user.id).first()
 
     if session:
-        bot.send_message(message.chat.id, text="Ви ще не почали опитування")
+        bot.send_message(message.chat.id, text="You have already started quiz")
         return
 
     inline_markup = types.InlineKeyboardMarkup()
@@ -93,7 +93,7 @@ def start_quiz_menu(message):
         topic_btn.callback_data = '{"quiz_id": ' + str(topic.id)+"}"
         inline_markup.add(topic_btn)
 
-    bot.send_message(message.chat.id, text="Оберіть опитування:", reply_markup=inline_markup)
+    bot.send_message(message.chat.id, text="Choose quiz:", reply_markup=inline_markup)
 
 
 @bot.message_handler(content_types="text")
@@ -111,7 +111,7 @@ def text_commands(message):
         stop_quiz(message)
         return
 
- 
+
 def is_answer_callback(callback):
     data = json.loads(callback.data)
 
