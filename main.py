@@ -62,8 +62,8 @@ def get_help(message):
 @bot.message_handler(commands=['stop'])
 def stop_quiz(message):
     menu_markup = types.ReplyKeyboardMarkup()
-    start_button = types.KeyboardButton("Start Quiz")
-    help_button = types.KeyboardButton("Help")
+    start_button = types.KeyboardButton("Почати опитування")
+    help_button = types.KeyboardButton("Допомога")
     menu_markup.row(start_button)
     menu_markup.row(help_button)
 
@@ -141,8 +141,8 @@ def send_question(chat_id, question, num):
 
 def quiz_finished(session, chat_id):
     menu_markup = types.ReplyKeyboardMarkup()
-    start_button = types.KeyboardButton("Start Quiz")
-    help_button = types.KeyboardButton("Help")
+    start_button = types.KeyboardButton("Почати опитування")
+    help_button = types.KeyboardButton("Допомога")
     menu_markup.row(start_button)
     menu_markup.row(help_button)
     bot.send_message(chat_id, text="Ви завершили опитування!", reply_markup=menu_markup)
@@ -176,7 +176,7 @@ def user_answered(call):
         return
 
     if question.id != session.current_question:
-        bot.send_message(call.message.chat.id, text="Перестаньте списувата!")
+        bot.send_message(call.message.chat.id, text="Перестаньте списувати!")
         return
 
     if answer.correct:
@@ -231,8 +231,8 @@ def create_session(call):
         db.session.commit()
 
         menu_markup = types.ReplyKeyboardMarkup()
-        start_button = types.KeyboardButton("Stop Quiz")
-        help_button = types.KeyboardButton("Help")
+        start_button = types.KeyboardButton("Почати опитування")
+        help_button = types.KeyboardButton("Допомога")
         menu_markup.row(start_button)
         menu_markup.row(help_button)
 
