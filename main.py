@@ -51,7 +51,7 @@ def show_current_menu(message):
     help_button = types.KeyboardButton("Help")
     menu_markup.row(start_button)
     menu_markup.row(help_button)
-    bot.send_message(message.chat.id, text="Choose one:", reply_markup=menu_markup)
+    bot.send_message(message.chat.id, text="Оберіть одне:", reply_markup=menu_markup)
 
 
 @bot.message_handler(commands="help")
@@ -236,7 +236,7 @@ def create_session(call):
         menu_markup.row(start_button)
         menu_markup.row(help_button)
 
-        bot.send_message(call.message.chat.id, "Quiz has been started", reply_markup=menu_markup)
+        bot.send_message(call.message.chat.id, "Ви розпочали опитування", reply_markup=menu_markup)
         send_question(call.message.chat.id, question, session.passed_questions)
 
 
