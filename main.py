@@ -161,18 +161,18 @@ def user_answered(call):
     answer = Answer.query.filter_by(id=answer_id).first()
 
     if not answer:
-        bot.send_message(call.message.chat.id, text="Something wrong =(")
+        bot.send_message(call.message.chat.id, text="Щось пішло не так =(")
 
     session = Session.query.filter_by(user=call.from_user.id).first()
 
     if not session:
-        bot.send_message(call.message.chat.id, text="You have not start quiz yet")
+        bot.send_message(call.message.chat.id, text="Ви ще не розпочали опитування")
         return
 
     question = Question.query.filter_by(topic=session.topic, id=answer.question).first()
 
     if not question:
-        bot.send_message(call.message.chat.id, text="This question will not count\n It is from another topic")
+        bot.send_message(call.message.chat.id, text="Це питання не зарахується\n Воно з іншої теми")
         return
 
     if question.id != session.current_question:
@@ -211,7 +211,7 @@ def create_session(call):
 
     existed_session = Session.query.filter_by(user=call.from_user.id).first()
     if existed_session:
-        bot.send_message(call.message.chat.id, text="You have already started quiz")
+        bot.send_message(call.message.chat.id, text="Ви вже розпочали опитування")
         return
 
     data = json.loads(call.data)
@@ -219,7 +219,7 @@ def create_session(call):
 
     topic = Topic.query.filter_by(id=quiz_id).first()
 
-    bot.send_message(call.message.chat.id, text="Your topic: "+topic.name)
+    bot.send_message(call.message.chat.id, text="Ваша тема: "+topic.name)
 
     questions = Question.query.filter_by(topic=quiz_id).all()
     if len(questions):
